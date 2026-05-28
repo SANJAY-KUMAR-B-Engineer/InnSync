@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "Room": {
+      "title": "Room",
+      "description": "Represents a hotel room and its physical, cleaning, and maintenance status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomNumber": { "type": "string" },
+        "floorNumber": { "type": "integer" },
+        "roomType": { "type": "string", "enum": ["Standard", "Deluxe", "Suite", "Penthouse"] },
+        "status": { "type": "string", "enum": ["Available", "Occupied", "Needs Cleaning", "Maintenance", "Reserved"] },
+        "cleaningStatus": { "type": "string", "enum": ["Clean", "Needs Cleaning", "In Progress", "Delayed"] },
+        "maintenanceStatus": { "type": "string", "enum": ["Operational", "Issues Open", "Overdue"] },
+        "assignedGuestId": { "type": "string" },
+        "cleaningPriority": { "type": "string", "enum": ["Low", "Medium", "High"] },
+        "cleaningTimeStart": { "type": "string" },
+        "cleaningElapsedSeconds": { "type": "integer" },
+        "checkInTime": { "type": "string" },
+        "checkOutTime": { "type": "string" }
+      },
+      "required": ["id", "roomNumber", "floorNumber", "roomType", "status", "cleaningStatus", "maintenanceStatus", "cleaningPriority", "cleaningElapsedSeconds"]
+    },
+    "MaintenanceTicket": {
+      "title": "MaintenanceTicket",
+      "description": "Represents a log for lift, AC, plumbing, utilities, or general issues requiring technical attention.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "system": { "type": "string", "enum": ["Lift", "AC", "Plumbing", "Electricity", "WiFi", "Water Leakage", "Emergency"] },
+        "roomNumber": { "type": "string" },
+        "issue": { "type": "string" },
+        "priority": { "type": "string", "enum": ["Low", "Medium", "High", "Emergency"] },
+        "assignedTechnician": { "type": "string" },
+        "status": { "type": "string", "enum": ["Open", "In Progress", "Resolved"] },
+        "notes": { "type": "string" },
+        "creationTime": { "type": "string" },
+        "completionTime": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "isPredictive": { "type": "boolean" }
+      },
+      "required": ["id", "system", "issue", "priority", "assignedTechnician", "status", "creationTime"]
+    },
+    "Guest": {
+      "title": "Guest",
+      "description": "Represents a checking-in, checked-out, or reserved hotel customer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "status": { "type": "string", "enum": ["CheckedIn", "Reserved", "CheckedOut"] },
+        "assignedRoom": { "type": "string" },
+        "checkInDate": { "type": "string" },
+        "checkOutDate": { "type": "string" },
+        "paymentStatus": { "type": "string", "enum": ["Paid", "Pending", "Refunded"] },
+        "isVIP": { "type": "boolean" },
+        "digitalIdUrl": { "type": "string" },
+        "historyCount": { "type": "integer" }
+      },
+      "required": ["id", "name", "email", "phone", "status", "checkInDate", "checkOutDate", "paymentStatus", "isVIP", "historyCount"]
+    },
+    "StaffMember": {
+      "title": "StaffMember",
+      "description": "Represents a hotel worker with a system role and active shifts.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["Super Admin", "Hotel Manager", "Receptionist", "Housekeeping Staff", "Technician"] },
+        "status": { "type": "string", "enum": ["On Duty", "Off Duty", "On Break"] },
+        "shiftTiming": { "type": "string" },
+        "assignedTasksCount": { "type": "integer" },
+        "completedTasksCount": { "type": "integer" },
+        "rating": { "type": "number" }
+      },
+      "required": ["id", "name", "role", "status", "shiftTiming", "assignedTasksCount", "completedTasksCount", "rating"]
+    },
+    "HotelNotification": {
+      "title": "HotelNotification",
+      "description": "Represents operational alerts pushed in real-time to reception and back-of-house personnel.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["warning", "info", "success", "danger"] },
+        "timestamp": { "type": "string" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "title", "message", "type", "timestamp", "read"]
+    },
+    "Financials": {
+      "title": "Financials",
+      "description": "Represents the dynamic hospitality SaaS metrics including revenue, ADR and RevPAR.",
+      "type": "object",
+      "properties": {
+        "todayRevenue": { "type": "number" },
+        "avgDailyRate": { "type": "number" },
+        "revpar": { "type": "number" },
+        "growthPercentage": { "type": "number" }
+      },
+      "required": ["todayRevenue", "avgDailyRate", "revpar", "growthPercentage"]
+    }
+  },
+  "firestore": {
+    "rooms": {
+      "schema": "Room",
+      "description": "A collection of hotel rooms, tracking current occupation and sanitization state."
+    },
+    "maintenance": {
+      "schema": "MaintenanceTicket",
+      "description": "A collection of logs with priorities detailing issues and repairs."
+    },
+    "guests": {
+      "schema": "Guest",
+      "description": "A collection of hotel guest profiles and state records."
+    },
+    "staff": {
+      "schema": "StaffMember",
+      "description": "A collection of employee cards with shift timings and roles."
+    },
+    "notifications": {
+      "schema": "HotelNotification",
+      "description": "A collection of live messages and active alerts broadcasted."
+    },
+    "financials": {
+      "schema": "Financials",
+      "description": "A collection containing real-time property operations financial indexes."
+    }
+  }
+}

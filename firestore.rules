@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (default deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- ROOMS COLLECTION ---
+    match /rooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn(); // In hotel ops, reception/managers can add/remove rooms
+      allow update: if isSignedIn() && (
+        // Enforce basic type checking and key protection
+        request.resource.data.roomNumber is string &&
+        request.resource.data.floorNumber is int &&
+        request.resource.data.roomType is string &&
+        request.resource.data.status is string &&
+        request.resource.data.cleaningStatus is string
+      );
+    }
+
+    // --- MAINTENANCE COLLECTION ---
+    match /maintenance/{ticketId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.resource.data.system is string &&
+        request.resource.data.issue is string &&
+        request.resource.data.priority is string &&
+        request.resource.data.status is string
+      );
+    }
+
+    // --- GUESTS COLLECTION ---
+    match /guests/{guestId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.resource.data.name is string &&
+        request.resource.data.email is string &&
+        request.resource.data.status is string
+      );
+    }
+
+    // --- STAFF COLLECTION ---
+    match /staff/{staffId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.resource.data.name is string &&
+        request.resource.data.role is string &&
+        request.resource.data.status is string
+      );
+    }
+
+    // --- NOTIFICATIONS COLLECTION ---
+    match /notifications/{notifId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.resource.data.title is string &&
+        request.resource.data.message is string &&
+        request.resource.data.read is bool
+      );
+    }
+
+    // --- FINANCIALS COLLECTION ---
+    match /financials/{docId} {
+      allow read: if isSignedIn();
+      allow create, update, delete, write: if isSignedIn();
+    }
+  }
+}

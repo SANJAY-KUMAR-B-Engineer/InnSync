@@ -1,0 +1,6 @@
+{
+  "name": "InnSync",
+  "description": "Premium, minimal Hotel Operations Management control center for modern smart hospitality. Intelligent rooms, real-time tracking, predictive maintenance, and AI operations assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
